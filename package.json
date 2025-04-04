@@ -1,14 +1,19 @@
 {
-  "name": "onebot11-proto-client",
-  "version": "1.0.0",
-  "description": "onebot11协议客户端api",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "zwa73",
-  "license": "ISC",
-  "dependencies": {
-    "@zwa73/utils": "^1.0.168"
-  }
+	"name": "onebot11-proto-client",
+	"version": "1.0.2",
+	"description": "onebot11协议客户端api",
+	"main": "index.js",
+	"scripts": {
+		"build": "powershell scripts/build",
+		"compile": "powershell scripts/compile",
+		"watch": "powershell scripts/watch",
+		"build-schema": "powershell scripts/build-schema",
+		"init": "deepkit-type-install",
+		"expand-macro": "powershell scripts/expand-macro"
+	},
+	"author": "zwa73",
+	"license": "ISC",
+	"dependencies": {
+		"@zwa73/utils": "^1.0.168"
+	}
 }
