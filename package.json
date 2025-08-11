@@ -2,7 +2,7 @@
 	"name": "@sosraciel-lamda/onebot11-proto-client",
 	"version": "1.0.7",
 	"description": "onebot11协议客户端api",
-	"main": "index.js",
+	"main": "dist/index.js",
 	"scripts": {
 		"build": "powershell scripts/build",
 		"compile": "powershell scripts/compile",
@@ -19,8 +19,6 @@
 		"@zwa73/utils": "^1.0.234"
 	},
 	"files": [
-		"dist",
-		"index.js",
-		"index.d.ts"
+		"dist"
 	]
 }
