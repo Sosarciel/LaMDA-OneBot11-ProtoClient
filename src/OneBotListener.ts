@@ -1,6 +1,6 @@
 import http from 'http';
 
-import { AnyFunc, Keyable, SLogger, UtilFunc } from '@zwa73/utils';
+import { EventSystem, SLogger } from '@zwa73/utils';
 
 import {
     ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendPokeEvent, FriendRecallEvent,
@@ -11,103 +11,80 @@ import {
     OneBotEventData, PrivateMessageEvent, PrivateMessageQO
 } from './Event';
 
-type PRE<V extends AnyFunc> = Partial<Record<string,ListenerEvent<V>>>;
 
 /** 事件表 */
-type EventTable = Partial<{
+type EventTable = {
     /** 群消息事件 */
-    GroupMessage       : PRE<GroupMessageEvent>;
+    GroupMessage       : GroupMessageEvent;
     /** 私聊消息事件 */
-    PrivateMessage     : PRE<PrivateMessageEvent>;
+    PrivateMessage     : PrivateMessageEvent;
 
     /** 好友请求事件 */
-    FriendRequest      : PRE<FriendRequestEvent>;
+    FriendRequest      : FriendRequestEvent;
     /** 加群请求/邀请事件 */
-    GroupRequest       : PRE<GroupRequestEvent>;
+    GroupRequest       : GroupRequestEvent;
 
     /** 群文件上传事件 */
-    GroupUpload        : PRE<GroupUploadEvent>;
+    GroupUpload        : GroupUploadEvent;
     /** 群管理员变动事件 */
-    GroupAdmin         : PRE<GroupAdminEvent>;
+    GroupAdmin         : GroupAdminEvent;
     /** 群成员减少事件 */
-    GroupDecrease      : PRE<GroupDecreaseEvent>;
+    GroupDecrease      : GroupDecreaseEvent;
     /** 群成员增加事件 */
-    GroupIncrease      : PRE<GroupIncreaseEvent>;
+    GroupIncrease      : GroupIncreaseEvent;
     /** 群禁言事件 */
-    GroupBan           : PRE<GroupBanEvent>;
+    GroupBan           : GroupBanEvent;
     /** 好友添加事件 */
-    FriendAdd          : PRE<FriendAddEvent>;
+    FriendAdd          : FriendAddEvent;
     /** 群消息撤回事件 */
-    GroupRecall        : PRE<GroupRecallEvent>;
+    GroupRecall        : GroupRecallEvent;
     /**好友消息撤回事件 */
-    FriendRecall       : PRE<FriendRecallEvent>;
+    FriendRecall       : FriendRecallEvent;
     /** 好友戳一戳事件
      * @go_cqhttp_only
      */
-    FriendPoke         : PRE<FriendPokeEvent>;
+    FriendPoke         : FriendPokeEvent;
     /** 群内戳一戳事件 */
-    GroupPoke          : PRE<GroupPokeEvent>;
+    GroupPoke          : GroupPokeEvent;
     /** 群红包运气王提示事件 */
-    GroupLuckyKing     : PRE<GroupLuckyKingEvent>;
+    GroupLuckyKing     : GroupLuckyKingEvent;
     /** 群成员荣誉变更提示事件 */
-    GroupHonor         : PRE<GroupHonorEvent>;
+    GroupHonor         : GroupHonorEvent;
     /** 群成员名片更新事件
      * @go_cqhttp_only
      */
-    GroupCard          : PRE<GroupCardEvent>;
+    GroupCard          : GroupCardEvent;
     /** 群成员头衔更新事件
      * @go_cqhttp_only
      */
-    GroupTitle         : PRE<GroupTitleEvent>;
+    GroupTitle         : GroupTitleEvent;
     /** 接收到离线文件事件
      * @go_cqhttp_only
      */
-    OfflineFile        : PRE<OfflineFileEvent>;
+    OfflineFile        : OfflineFileEvent;
     /** 其他客户端在线状态变更事件
      * @go_cqhttp_only
      */
-    ClientStatus       : PRE<ClientStatusEvent>;
+    ClientStatus       : ClientStatusEvent;
     /** 精华消息事件
      * @go_cqhttp_only
      */
-    EssenceMessage     : PRE<EssenceMessageEvent>;
+    EssenceMessage     : EssenceMessageEvent;
 
     /** 心跳元事件 */
-    HeartbeatMeta      : PRE<HeartbeatMetaEvent>;
+    HeartbeatMeta      : HeartbeatMetaEvent;
     /** 生命周期元事件 */
-    LifecycleMeta      : PRE<LifecycleMetaEvent>;
-}>;
+    LifecycleMeta      : LifecycleMetaEvent;
+};
 
-/**事件类型 */
-type EventType = keyof EventTable;
-type Arg1<T extends EventType> = Required<EventTable>[T] extends PRE<infer E> ? Parameters<E>[0] : never;
-type Arg2<T extends EventType> = Required<EventTable>[T] extends PRE<infer E> ? Parameters<E>[1] : never;
-type Func<T extends EventType> = Required<EventTable>[T] extends PRE<infer E> ? E : never;
-
-/** 事件监听 */
-type ListenerEvent<E extends AnyFunc> = {
-    /**权重 */
-    weight:number;
-    /**事件ID */
-    id:string;
-    /**事件函数 */
-    event:E;
-}
-type InvokeEventOpt = Partial<{
-    /**事件权重 越高越先触发 */
-    weight:number;
-    /**事件id */
-    id:string;
-}>
 
 /**OneBot11+http协议监听器 */
-export class OneBotListener {
-    /**注册的事件表 */
-    private _eventTable: EventTable = {};
+export class OneBotListener extends EventSystem<EventTable>{
     /**监听端口 */
     private port: number;
 
     constructor(port: number) {
+        super();
         this.port = port;
         http.createServer((req, res) => {
             res.writeHead(200,{'Content-Type': 'application/json'});
@@ -180,8 +157,8 @@ export class OneBotListener {
                         SLogger.warn('OneBotListener.routeEvent 一个预料之外的 notice_type',data);
                         return;
                     }
-                    const fixdata = data as Arg1<typeof netype>;
-                    this.invokeEvent(netype,fixdata,undefined);
+                    const fixdata = data;
+                    this.invokeEvent(netype,fixdata as any);
                     return;
                 }
                 else if(data.sub_type!='poke'){
@@ -195,16 +172,16 @@ export class OneBotListener {
                         SLogger.warn('OneBotListener.routeEvent 一个预料之外的 notify sub_type',data);
                         return;
                     }
-                    const fixdata = data as Arg1<typeof netype>;
-                    this.invokeEvent(netype,fixdata,undefined);
+                    const fixdata = data;
+                    this.invokeEvent(netype,fixdata as any);
                     return;
                 }else if(data.sub_type=='poke'){
                     if('group_id' in data){
-                        this.invokeEvent('GroupPoke',data,undefined);
+                        this.invokeEvent('GroupPoke',data);
                         return;
                     }
                     else{
-                        this.invokeEvent('FriendPoke',data,undefined);
+                        this.invokeEvent('FriendPoke',data);
                         return;
                     }
                 }
@@ -213,10 +190,10 @@ export class OneBotListener {
             case 'meta_event':
                 switch(data.meta_event_type){
                     case 'heartbeat':
-                        this.invokeEvent('HeartbeatMeta',data,undefined);
+                        this.invokeEvent('HeartbeatMeta',data);
                         return;
                     case 'lifecycle':
-                        this.invokeEvent('LifecycleMeta',data,undefined);
+                        this.invokeEvent('LifecycleMeta',data);
                         return;
                     default:
                         SLogger.warn('OneBotListener.routeEvent 一个预料之外的 meta_event_type',data);
@@ -226,35 +203,6 @@ export class OneBotListener {
                 SLogger.warn('OneBotListener.routeEvent 一个预料之外的 post_type',data);
                 return;
         }
-    }
-    /**调用事件  
-     * @param eventType - 事件类型
-     * @param arg1      - 事件函数的第一个参数 通常为事件数据
-     * @param arg2      - 事件函数的第二个参数 通常为事件快速操作工具
-     */
-    invokeEvent<T extends EventType>(eventType:T,arg1:Arg1<T>,arg2:Arg2<T>){
-        const emap = this._eventTable[eventType];
-        if(emap===undefined) return;
-        const elist:Exclude<Required<EventTable>[EventType][string],undefined>[]
-            = Object.values(emap);
-        elist.sort((a,b)=>b.weight-a.weight)
-            .forEach((v)=>v.event(arg1,arg2));
-    }
-    /**注册事件  
-     * @param eventType - 事件类型
-     * @param event     - 事件函数
-     * @param opt       - 可选参数
-     */
-    registerEvent<T extends EventType>(eventType: T, event: Func<T>, opt?:InvokeEventOpt) {
-        this._eventTable[eventType] = this._eventTable[eventType]??{};
-        const typeTable = this._eventTable[eventType]!;
-
-        const id = opt?.id ?? UtilFunc.genUUID();
-        const weight = opt?.weight ?? 0;
-
-        typeTable[id] = {
-            event,id,weight
-        };
     }
 }
 

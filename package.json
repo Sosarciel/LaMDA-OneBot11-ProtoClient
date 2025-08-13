@@ -1,6 +1,6 @@
 {
 	"name": "@sosraciel-lamda/onebot11-proto-client",
-	"version": "1.0.7",
+	"version": "1.0.9",
 	"description": "onebot11协议客户端api",
 	"main": "dist/index.js",
 	"scripts": {
@@ -14,9 +14,9 @@
 	"author": "zwa73",
 	"license": "ISC",
 	"dependencies": {
-		"@zwa73/js-utils": "^1.0.23",
+		"@zwa73/js-utils": "^1.0.37",
 		"@zwa73/modular-mixer": "^1.0.4",
-		"@zwa73/utils": "^1.0.234"
+		"@zwa73/utils": "^1.0.240"
 	},
 	"files": [
 		"dist"
