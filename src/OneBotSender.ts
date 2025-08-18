@@ -12,7 +12,7 @@ import {
     GetMsgRespData, GetRecordRespData, GetStatusRespData, GetStrangerInfoRespData,
     GetVersionInfoRespData, SendGroupMsgRespData, SendMsgRespData, SendPrivateMsgPostData,
     SendPrivateMsgRespData
-} from './RequestInterface';
+} from './RESTApi';
 
 /**OneBot11+http 协议发信器 */
 export class OneBotSender{
