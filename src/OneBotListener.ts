@@ -88,17 +88,17 @@ export class OneBotListener extends EventSystem<EventTable>{
         this.port = port;
         http.createServer((req, res) => {
             res.writeHead(200,{'Content-Type': 'application/json'});
-            res.on('error',(e) => SLogger.warn("发送反馈错误:",e));
+            res.on('error',(e) => SLogger.warn("OneBot11-ProtoClient 发送反馈错误:",e));
             let rawdata = "";
             //每当接收到请求体数据，累加到post中
             req.on('data', (chunk) =>rawdata+=chunk);
-            req.on('error', (e) => SLogger.warn(`监听请求错误:`,e));
+            req.on('error', (e) => SLogger.warn(`OneBot11-ProtoClient 监听请求错误:`,e));
             req.on('end', () => {
                 try{
                     const jsonData = JSON.parse(rawdata);
                     this.routeEvent(jsonData,res);
                 }catch(e){
-                    SLogger.warn("OneBotListener 数据接收错误:",e,`数据组为:\n${rawdata}`);
+                    SLogger.warn("OneBot11-ProtoClient OneBotListener 数据接收错误:",e,`数据组为:\n${rawdata}`);
                     res.end();
                     return;
                 }
@@ -121,7 +121,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                         this.invokeEvent('PrivateMessage',data,new PrivateMessageQO(res));
                         return;
                     default:
-                        SLogger.warn('OneBotListener.routeEvent 一个预料之外的 message_type',data);
+                        SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 message_type',data);
                         return;
                 }
             case 'request':
@@ -133,7 +133,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                         this.invokeEvent('GroupRequest',data,new GroupRequestQO(res));
                         return;
                     default:
-                        SLogger.warn('OneBotListener.routeEvent 一个预料之外的 request_type',data);
+                        SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 request_type',data);
                         return;
                 }
             case 'notice':
@@ -154,7 +154,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                     } as const;
                     const netype = emap[data.notice_type as keyof typeof emap];
                     if(netype==null){
-                        SLogger.warn('OneBotListener.routeEvent 一个预料之外的 notice_type',data);
+                        SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 notice_type',data);
                         return;
                     }
                     const fixdata = data;
@@ -169,7 +169,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                     } as const;
                     const netype = emap[data.sub_type as keyof typeof emap];
                     if(netype==null){
-                        SLogger.warn('OneBotListener.routeEvent 一个预料之外的 notify sub_type',data);
+                        SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 notify sub_type',data);
                         return;
                     }
                     const fixdata = data;
@@ -185,7 +185,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                         return;
                     }
                 }
-                SLogger.warn('OneBotListener.routeEvent 一个预料之外的 notice_type',data);
+                SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 notice_type',data);
                 return;
             case 'meta_event':
                 switch(data.meta_event_type){
@@ -196,11 +196,11 @@ export class OneBotListener extends EventSystem<EventTable>{
                         this.invokeEvent('LifecycleMeta',data);
                         return;
                     default:
-                        SLogger.warn('OneBotListener.routeEvent 一个预料之外的 meta_event_type',data);
+                        SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 meta_event_type',data);
                         return;
                 }
             default:
-                SLogger.warn('OneBotListener.routeEvent 一个预料之外的 post_type',data);
+                SLogger.warn('OneBot11-ProtoClient OneBotListener.routeEvent 一个预料之外的 post_type',data);
                 return;
         }
     }
