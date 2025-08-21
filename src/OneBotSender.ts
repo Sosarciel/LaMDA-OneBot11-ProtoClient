@@ -47,7 +47,7 @@ export class OneBotSender{
                 res.setEncoding('utf8');
                 res.on('data',(data) => rawdata+=data);
                 res.on('error',(e) => {
-                    SLogger.warn("OneBot11-ProtoClient OneBotSender 接收反馈错误:",e);
+                    SLogger.warn("${LogPrefix}OneBotSender 接收反馈错误:",e);
                     resolve(null);
                 });
                 res.on('end',() => {
@@ -56,13 +56,13 @@ export class OneBotSender{
                             resolve((JSON.parse(rawdata) as ActionResp).data);
                         resolve(null);
                     }catch(e){
-                        SLogger.warn('OneBot11-ProtoClient OneBotSender.post 错误:',e,"rawdata:",rawdata);
+                        SLogger.warn('${LogPrefix}OneBotSender.post 错误:',e,"rawdata:",rawdata);
                         resolve(null);
                     }
                 });
             });
             req.on('error',(e) => {
-                SLogger.warn("OneBot11-ProtoClient 发送请求错误:",e);
+                SLogger.warn("${LogPrefix}发送请求错误:",e);
                 resolve(null);
             });
             req.write(json);
