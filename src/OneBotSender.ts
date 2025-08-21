@@ -13,6 +13,7 @@ import {
     GetVersionInfoRespData, SendGroupMsgRespData, SendMsgRespData, SendPrivateMsgPostData,
     SendPrivateMsgRespData
 } from './RESTApi';
+import { LogPrefix } from './Constant';
 
 /**OneBot11+http 协议发信器 */
 export class OneBotSender{
@@ -46,8 +47,8 @@ export class OneBotSender{
                 let rawdata = "";
                 res.setEncoding('utf8');
                 res.on('data',(data) => rawdata+=data);
-                res.on('error',(e) => {
-                    SLogger.warn("${LogPrefix}OneBotSender 接收反馈错误:",e);
+                res.on('error', err => {
+                    SLogger.warn(`${LogPrefix}OneBotSender 接收反馈错误:`,err);
                     resolve(null);
                 });
                 res.on('end',() => {
@@ -56,13 +57,13 @@ export class OneBotSender{
                             resolve((JSON.parse(rawdata) as ActionResp).data);
                         resolve(null);
                     }catch(e){
-                        SLogger.warn('${LogPrefix}OneBotSender.post 错误:',e,"rawdata:",rawdata);
+                        SLogger.warn(`${LogPrefix}OneBotSender.post 错误:`,e,"rawdata:",rawdata);
                         resolve(null);
                     }
                 });
             });
-            req.on('error',(e) => {
-                SLogger.warn("${LogPrefix}发送请求错误:",e);
+            req.on('error', err => {
+                SLogger.warn(`${LogPrefix}发送请求错误:`,err);
                 resolve(null);
             });
             req.write(json);

@@ -1,6 +1,6 @@
 {
 	"name": "@sosraciel-lamda/onebot11-protoclient",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"description": "onebot11协议客户端api",
 	"main": "dist/index.js",
 	"scripts": {
