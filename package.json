@@ -8,8 +8,7 @@
 		"compile": "powershell scripts/compile",
 		"watch": "powershell scripts/watch",
 		"build-schema": "powershell scripts/build-schema",
-		"expand-macro": "powershell scripts/expand-macro",
-        "pack": "powershell scripts/pack"
+		"expand-macro": "powershell scripts/expand-macro"
 	},
 	"author": "zwa73",
 	"license": "ISC",
