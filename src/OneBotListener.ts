@@ -88,7 +88,7 @@ export class OneBotListener extends EventSystem<EventTable>{
         super();
         this.port = port;
         http.createServer((req, res) => {
-            res.writeHead(200,{'Content-Type': 'application/json'});
+            //res.writeHead(200,{'Content-Type': 'application/json'});
             res.on('error',(e) => SLogger.warn(`${LogPrefix}发送反馈错误:`,e));
             let rawdata = "";
             //每当接收到请求体数据，累加到post中
