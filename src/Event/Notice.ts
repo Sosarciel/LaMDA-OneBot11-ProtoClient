@@ -1,13 +1,16 @@
-import { OneBotEventBaseData,File } from './EventInterface';
+import { OneBotEventBaseData, File } from './EventInterface';
 
 
 
-/** 群文件上传事件数据 */
-export type GroupUploadEventData = OneBotEventBaseData&{
+type OneBotEventNoticeData<T extends string> = OneBotEventBaseData&{
     /** string - 上报类型 */
     post_type: "notice";
     /** string - 通知类型 */
-    notice_type: "group_upload";
+    notice_type: T;
+}
+
+/** 群文件上传事件数据 */
+export type GroupUploadEventData = OneBotEventNoticeData<"group_upload">&{
     /** number (int64) - 群号 */
     group_id: number;
     /** number (int64) - 发送者 QQ 号 */
@@ -19,11 +22,7 @@ export type GroupUploadEventData = OneBotEventBaseData&{
 export type GroupUploadEvent = (data: GroupUploadEventData) => void;
 
 /** 群管理员变动事件数据 */
-export type GroupAdminEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "group_admin";
+export type GroupAdminEventData = OneBotEventNoticeData<"group_admin">&{
     /** string - 事件子类型，分别表示设置和取消管理员 */
     sub_type: "set" | "unset";
     /** number (int64) - 群号 */
@@ -35,11 +34,7 @@ export type GroupAdminEventData = OneBotEventBaseData&{
 export type GroupAdminEvent = (data: GroupAdminEventData) => void;
 
 /** 群成员减少事件数据 */
-export type GroupDecreaseEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "group_decrease";
+export type GroupDecreaseEventData = OneBotEventNoticeData<"group_decrease">&{
     /** string - 事件子类型，分别表示主动退群、成员被踢、登录号被踢 */
     sub_type: "leave" | "kick" | "kick_me";
     /** number (int64) - 群号 */
@@ -53,11 +48,7 @@ export type GroupDecreaseEventData = OneBotEventBaseData&{
 export type GroupDecreaseEvent = (data: GroupDecreaseEventData) => void;
 
 /** 群成员增加事件数据 */
-export type GroupIncreaseEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "group_increase";
+export type GroupIncreaseEventData = OneBotEventNoticeData<"group_increase">&{
     /** string - 事件子类型，分别表示管理员已同意入群、管理员邀请入群 */
     sub_type: "approve" | "invite";
     /** number (int64) - 群号 */
@@ -71,11 +62,7 @@ export type GroupIncreaseEventData = OneBotEventBaseData&{
 export type GroupIncreaseEvent = (data: GroupIncreaseEventData) => void;
 
 /** 群禁言事件数据 */
-export type GroupBanEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "group_ban";
+export type GroupBanEventData = OneBotEventNoticeData<"group_ban">&{
     /** string - 事件子类型，分别表示禁言、解除禁言 */
     sub_type: "ban" | "lift_ban";
     /** number (int64) - 群号 */
@@ -91,11 +78,7 @@ export type GroupBanEventData = OneBotEventBaseData&{
 export type GroupBanEvent = (data: GroupBanEventData) => void;
 
 /** 好友添加事件数据 */
-export type FriendAddEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "friend_add";
+export type FriendAddEventData = OneBotEventNoticeData<"friend_add">&{
     /** number (int64) - 新添加好友 QQ 号 */
     user_id: number;
 };
@@ -103,11 +86,7 @@ export type FriendAddEventData = OneBotEventBaseData&{
 export type FriendAddEvent = (data: FriendAddEventData) => void;
 
 /** 群消息撤回事件数据 */
-export type GroupRecallEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "group_recall";
+export type GroupRecallEventData = OneBotEventNoticeData<"group_recall">&{
     /** number (int64) - 群号 */
     group_id: number;
     /** number (int64) - 消息发送者 QQ 号 */
@@ -121,11 +100,7 @@ export type GroupRecallEventData = OneBotEventBaseData&{
 export type GroupRecallEvent = (data: GroupRecallEventData) => void;
 
 /** 好友消息撤回事件数据 */
-export type FriendRecallEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 通知类型 */
-    notice_type: "friend_recall";
+export type FriendRecallEventData = OneBotEventNoticeData<"friend_recall">&{
     /** number (int64) - 好友 QQ 号 */
     user_id: number;
     /** number (int64) - 被撤回的消息 ID */
@@ -134,14 +109,10 @@ export type FriendRecallEventData = OneBotEventBaseData&{
 /** 好友消息撤回事件 */
 export type FriendRecallEvent = (data: FriendRecallEventData) => void;
 
-/** 好友戳一戳事件数据 
+/** 好友戳一戳事件数据
  * @go_cqhttp_only
  */
-export type FriendPokeEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "notify";
+export type FriendPokeEventData = OneBotEventNoticeData<"notify">&{
     /** string - 提示类型 */
     sub_type: "poke";
     /** int64 - 发送者 QQ 号 */
@@ -157,11 +128,7 @@ export type FriendPokeEventData = OneBotEventBaseData&{
 export type FriendPokeEvent = (data: FriendPokeEventData) => void;
 
 /** 群内戳一戳事件数据 */
-export type GroupPokeEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "notify";
+export type GroupPokeEventData = OneBotEventNoticeData<"notify">&{
     /** int64 - 群号 */
     group_id: number;
     /** string - 提示类型 */
@@ -175,11 +142,7 @@ export type GroupPokeEventData = OneBotEventBaseData&{
 export type GroupPokeEvent = (data: GroupPokeEventData) => void;
 
 /** 群红包运气王提示事件数据 */
-export type GroupLuckyKingEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "notify";
+export type GroupLuckyKingEventData = OneBotEventNoticeData<"notify">&{
     /** int64 - 群号 */
     group_id: number;
     /** string - 提示类型 */
@@ -193,11 +156,7 @@ export type GroupLuckyKingEventData = OneBotEventBaseData&{
 export type GroupLuckyKingEvent = (data: GroupLuckyKingEventData) => void;
 
 /** 群成员荣誉变更提示事件数据 */
-export type GroupHonorEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "notify";
+export type GroupHonorEventData = OneBotEventNoticeData<"notify">&{
     /** int64 - 群号 */
     group_id: number;
     /** string - 提示类型 */
@@ -210,14 +169,10 @@ export type GroupHonorEventData = OneBotEventBaseData&{
 /** 群成员荣誉变更提示事件 */
 export type GroupHonorEvent = (data: GroupHonorEventData) => void;
 
-/** 群成员名片更新事件数据 
+/** 群成员名片更新事件数据
  * @go_cqhttp_only
  */
-export type GroupCardEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "group_card";
+export type GroupCardEventData = OneBotEventNoticeData<"group_card">&{
     /** int64 - 群号 */
     group_id: number;
     /** int64 - 成员id */
@@ -235,11 +190,7 @@ export type GroupCardEvent = (data: GroupCardEventData) => void;
 /** 群成员头衔更新事件数据
  * @go_cqhttp_only
  */
-export type GroupTitleEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "notify";
+export type GroupTitleEventData = OneBotEventNoticeData<"notify">&{
     /** int64 - 群号 */
     group_id: number;
     /** int64 - 成员id */
@@ -257,11 +208,7 @@ export type GroupTitleEvent = (data: GroupTitleEventData) => void;
 /** 接收到离线文件事件数据
  * @go_cqhttp_only
  */
-export type OfflineFileEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "offline_file";
+export type OfflineFileEventData = OneBotEventNoticeData<"offline_file">&{
     /** int64 - 发送者id */
     user_id: number;
     /** object - 文件数据 */
@@ -275,11 +222,7 @@ export type OfflineFileEvent = (data: OfflineFileEventData) => void;
 /** 其他客户端在线状态变更事件数据
  * @go_cqhttp_only
  */
-export type ClientStatusEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "client_status";
+export type ClientStatusEventData = OneBotEventNoticeData<"client_status">&{
     /** Device - 客户端信息 */
     client: string; //Device;
     /** bool - 当前是否在线 */
@@ -293,11 +236,7 @@ export type ClientStatusEvent = (data: ClientStatusEventData) => void;
 /** 精华消息事件数据
  * @go_cqhttp_only
  */
-export type EssenceMessageEventData = OneBotEventBaseData&{
-    /** string - 上报类型 */
-    post_type: "notice";
-    /** string - 消息类型 */
-    notice_type: "essence";
+export type EssenceMessageEventData = OneBotEventNoticeData<"essence">&{
     /** string - 添加为add,移出为delete */
     sub_type: "add" | "delete";
     /** int64 - 消息发送者ID */
@@ -311,6 +250,26 @@ export type EssenceMessageEventData = OneBotEventBaseData&{
  * @go_cqhttp_only
  */
 export type EssenceMessageEvent = (data: EssenceMessageEventData) => void;
+
+/** 群消息表情点赞事件数据
+ * @llob_only
+ */
+export type GroupMessageEmojiLikeEventData = OneBotEventNoticeData<"group_msg_emoji_like">&{
+    /** int32 - 消息ID */
+    message_id: number;
+    /** 表情 */
+    likes: { emoji_id: string, count: number }[],
+    /** int64 - 群号 */
+    group_id: number;
+    /** int64 - 操作者 QQ 号 */
+    user_id: number;
+    /** bool - 是否添加 true为添加，false为取消 */
+    is_add: boolean;
+};
+/** 群消息表情点赞事件
+ * @llob_only
+ */
+export type GroupMessageEmojiLikeEvent = (data: GroupMessageEmojiLikeEventData) => void;
 
 
 /**任何通知事件数据 */
@@ -331,7 +290,8 @@ export type NoticeEventData =
     | GroupTitleEventData
     | OfflineFileEventData
     | ClientStatusEventData
-    | EssenceMessageEventData;
+    | EssenceMessageEventData
+    | GroupMessageEmojiLikeEventData;
 
 /**任何通知事件 */
 export type NoticeEvent =
@@ -351,4 +311,5 @@ export type NoticeEvent =
     & GroupTitleEvent
     & OfflineFileEvent
     & ClientStatusEvent
-    & EssenceMessageEvent;
+    & EssenceMessageEvent
+    & GroupMessageEmojiLikeEvent;
