@@ -1,6 +1,6 @@
 import http from 'http';
 
-import { EventSystem, SLogger } from '@zwa73/utils';
+import { EventSystem, sleep, SLogger } from '@zwa73/utils';
 
 import {
     ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendPokeEvent, FriendRecallEvent,
@@ -108,7 +108,9 @@ export class OneBotListener extends EventSystem<EventTable>{
                     return;
                 }
             });
-            res.end();
+            sleep(500)
+                .then(()=>res.end())
+                .catch(e=>SLogger.warn(`${LogPrefix}OneBotListener 数据接收后 res.end 错误:`,e,`数据组为:\n${rawdata}`));
         }).listen(this.port);
     }
 
