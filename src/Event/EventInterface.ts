@@ -1,10 +1,11 @@
-import { JObject } from "@zwa73/utils";
+import { JObject, SLogger } from "@zwa73/utils";
 import http from 'http';
 import { RequestEvent, RequestEventData } from "./Request";
 import { NoticeEvent, NoticeEventData } from "./Notice";
 import { MateEvent, MateEventData } from "./MateEvent";
 import { MessageEventData } from "./Message";
 import { MessageClip } from "../CQCode";
+import { LogPrefix } from "../Constant";
 
 /** 文件信息 */
 export type File = {
@@ -87,7 +88,14 @@ export class QuickOperationTool<T extends JObject = JObject> {
         this._res=res;
     }
     protected qo(jo:T){
-        return this._res.write(JSON.stringify(jo));
+        if(this._res.writableEnded)
+            return SLogger.warn(`${LogPrefix}QuickOperationTool.qo 错误:响应已结束`);
+        try{
+            this._res.write(JSON.stringify(jo));
+            this._res.end();
+        }catch(e){
+            SLogger.warn(`${LogPrefix}QuickOperationTool.qo 写入错误:`,e);
+        }
     }
 }
 

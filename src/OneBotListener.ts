@@ -108,7 +108,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                     return;
                 }
             });
-            sleep(500)
+            sleep(1000)
                 .then(()=>res.end())
                 .catch(e=>SLogger.warn(`${LogPrefix}OneBotListener 数据接收后 res.end 错误:`,e,`数据组为:\n${rawdata}`));
         }).listen(this.port);
