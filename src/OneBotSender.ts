@@ -1,6 +1,6 @@
 import http from 'http';
 
-import { JObject, JToken, SLogger } from '@zwa73/utils';
+import { JObject, SLogger } from '@zwa73/utils';
 
 import { GroupMessageAnonymous, Message } from './Event';
 import {
@@ -10,32 +10,39 @@ import {
     GetCsrfTokenRespData, GetForwardMsgRespData, GetFriendListRespData, GetGroupHonorInfoRespData,
     GetGroupInfoRespData, GetGroupMemberInfoRespData, GetImageRespData, GetLoginInfoRespData,
     GetMsgRespData, GetRecordRespData, GetStatusRespData, GetStrangerInfoRespData,
-    GetVersionInfoRespData, SendGroupMsgRespData, SendMsgRespData, SendPrivateMsgPostData,
-    SendPrivateMsgRespData
+    GetVersionInfoRespData, SendGroupMsgRespData, SendMsgRespData, SendPrivateMsgRespData
 } from './RESTApi';
 import { LogPrefix } from './Constant';
+
+
+type OneBotSenderOption = {
+    /**目标地址 */
+    host:string;
+    /**目标端口 */
+    port:number;
+}
 
 /**OneBot11+http 协议发信器 */
 export class OneBotSender{
     /**目标地址 */
-    private _host:string;
+    private host:string;
     /**目标端口 */
-    private _port:number;
-    /**
-     * @param host - 目标地址
-     * @param port - 目标端口
-     */
-    constructor (host:string,port:number){
-        this._host=host;
-        this._port=port;
+    private port:number;
+
+    static create(option:OneBotSenderOption){
+        return new OneBotSender(option.host,option.port);
+    }
+    private constructor (host:string,port:number){
+        this.host=host;
+        this.port=port;
     }
 
     /**发送请求 */
     private async post(path:string,data:JObject){
         const json = JSON.stringify(data);
         const options = {
-            host:this._host,
-            port:this._port,
+            host:this.host,
+            port:this.port,
             path:`/${path}`,
             method:'POST',
             headers:{

@@ -13,6 +13,16 @@ import {
 import { LogPrefix } from './Constant';
 
 
+type OneBotListenerOption = {
+    /**监听端口 */
+    port        : number;
+    /**快速操作时间限制 ms 默认100ms
+     * 超过时限后会自动res.end(),导致qa失效
+     */
+    qaTimelimit?: number;
+}
+
+
 /** 事件表 */
 type EventTable          = {
     /** 群消息事件 */
@@ -88,29 +98,42 @@ export class OneBotListener extends EventSystem<EventTable>{
     /**监听端口 */
     private port: number;
 
-    constructor(port: number) {
+    static create(option:OneBotListenerOption){
+        return new OneBotListener(option);
+    }
+    private constructor(option: OneBotListenerOption) {
+        const {port,qaTimelimit=100} = option;
         super();
         this.port = port;
         http.createServer((req, res) => {
+            let isEnd = false;
+            const tryResEnd = ()=>{
+                if(isEnd) return;
+                isEnd = true;
+                sleep(qaTimelimit)
+                    .then(()=>res.end())
+                    .catch(e=>SLogger.warn(`${LogPrefix}OneBotListener 数据接收后 res.end 错误:`,e,`数据组为:\n${rawdata}`));
+            }
             //res.writeHead(200,{'Content-Type': 'application/json'});
-            res.on('error',(e) => SLogger.warn(`${LogPrefix}发送反馈错误:`,e));
+            res.on('error', err => SLogger.warn(`${LogPrefix}发送反馈错误:`,err));
             let rawdata = "";
             //每当接收到请求体数据，累加到post中
-            req.on('data', (chunk) =>rawdata+=chunk);
-            req.on('error', (e) => SLogger.warn(`${LogPrefix}监听请求错误:`,e));
+            req.on('data', chunk =>rawdata+=chunk);
+            req.on('error', err =>{
+                tryResEnd();
+                SLogger.warn(`${LogPrefix}监听请求错误:`,err);
+            });
             req.on('end', () => {
                 try{
                     const jsonData = JSON.parse(rawdata);
                     this.routeEvent(jsonData,res);
+                    tryResEnd();
                 }catch(e){
                     SLogger.warn(`${LogPrefix}OneBotListener 数据接收错误:`,e,`数据组为:\n${rawdata}`);
                     res.end();
                     return;
                 }
             });
-            sleep(1000)
-                .then(()=>res.end())
-                .catch(e=>SLogger.warn(`${LogPrefix}OneBotListener 数据接收后 res.end 错误:`,e,`数据组为:\n${rawdata}`));
         }).listen(this.port);
     }
 
@@ -145,7 +168,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                 }
             case 'notice':
                 if(data.notice_type!='notify'){
-                    const emap = {
+                    const emap:Record<typeof data['notice_type'],keyof EventTable> = {
                         "group_upload"              : 'GroupUpload'               ,
                         "group_admin"               : 'GroupAdmin'                ,
                         "group_decrease"            : 'GroupDecrease'             ,
