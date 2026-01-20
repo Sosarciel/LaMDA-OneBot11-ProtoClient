@@ -158,7 +158,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                         "offline_file"              : 'OfflineFile'               ,
                         "client_status"             : 'ClientStatus'              ,
                         "essence"                   : 'EssenceMessage'            ,
-                        "group_message_emoji_like"  : 'GroupMessageEmojiLike'     ,
+                        "group_msg_emoji_like"      : 'GroupMessageEmojiLike'     ,
                     } as const;
                     const netype = emap[data.notice_type as keyof typeof emap];
                     if(netype==null){
