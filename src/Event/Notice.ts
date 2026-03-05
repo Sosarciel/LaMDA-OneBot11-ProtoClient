@@ -1,3 +1,4 @@
+import { JObject } from '@zwa73/js-utils';
 import { OneBotEventBaseData, File } from './EventInterface';
 
 
@@ -141,6 +142,45 @@ export type GroupPokeEventData = OneBotEventNoticeData<"notify">&{
 /** 群内戳一戳事件 */
 export type GroupPokeEvent = (data: GroupPokeEventData) => void;
 
+/** 群戳一戳撤回事件数据
+ * @llob_only
+ */
+export type FriendPokeRecallEventData = OneBotEventNoticeData<"notify">&{
+    /** string - 提示类型 */
+    sub_type: "poke_recall";
+    /** int64 - 发送者 QQ 号 */
+    user_id: number;
+    /** int64 - 被戳者 QQ 号 */
+    target_id: number;
+    /**一串json */
+    raw_info:JObject;
+};
+/** 群戳一戳撤回事件
+ * @llob_only
+ */
+export type FriendPokeRecallEvent = (data: FriendPokeRecallEventData) => void;
+
+/** 群戳一戳撤回事件数据
+ * @llob_only
+ */
+export type GroupPokeRecallEventData = OneBotEventNoticeData<"notify">&{
+    /** string - 提示类型 */
+    sub_type: "poke_recall";
+    /** int64 - 发送者 QQ 号 */
+    user_id: number;
+    /** int64 - 被戳者 QQ 号 */
+    target_id: number;
+    /** int64 - 群号 */
+    group_id: number;
+    /**一串json */
+    raw_info:JObject;
+};
+/** 群戳一戳撤回事件
+ * @llob_only
+ */
+export type GroupPokeRecallEvent = (data: GroupPokeRecallEventData) => void;
+
+
 /** 群红包运气王提示事件数据 */
 export type GroupLuckyKingEventData = OneBotEventNoticeData<"notify">&{
     /** int64 - 群号 */
@@ -214,7 +254,7 @@ export type OfflineFileEventData = OneBotEventNoticeData<"offline_file">&{
     /** object - 文件数据 */
     file: File;
 };
-/** 接收到离线文件事件 
+/** 接收到离线文件事件
  * @go_cqhttp_only
  */
 export type OfflineFileEvent = (data: OfflineFileEventData) => void;
@@ -228,7 +268,7 @@ export type ClientStatusEventData = OneBotEventNoticeData<"client_status">&{
     /** bool - 当前是否在线 */
     online: boolean;
 };
-/** 其他客户端在线状态变更事件 
+/** 其他客户端在线状态变更事件
  * @go_cqhttp_only
  */
 export type ClientStatusEvent = (data: ClientStatusEventData) => void;
@@ -284,6 +324,8 @@ export type NoticeEventData =
     | FriendRecallEventData
     | FriendPokeEventData
     | GroupPokeEventData
+    | FriendPokeRecallEventData
+    | GroupPokeRecallEventData
     | GroupLuckyKingEventData
     | GroupHonorEventData
     | GroupCardEventData
@@ -305,6 +347,8 @@ export type NoticeEvent =
     & FriendRecallEvent
     & FriendPokeEvent
     & GroupPokeEvent
+    & FriendPokeRecallEvent
+    & GroupPokeRecallEvent
     & GroupLuckyKingEvent
     & GroupHonorEvent
     & GroupCardEvent

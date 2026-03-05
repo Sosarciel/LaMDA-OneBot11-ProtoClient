@@ -3,10 +3,10 @@ import http from 'http';
 import { EventSystem, sleep, SLogger } from '@zwa73/utils';
 
 import {
-    ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendPokeEvent, FriendRecallEvent,
+    ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendPokeEvent, FriendPokeRecallEvent, FriendRecallEvent,
     FriendRequestEvent, FriendRequestQO, GroupAdminEvent, GroupBanEvent, GroupCardEvent,
     GroupDecreaseEvent, GroupHonorEvent, GroupIncreaseEvent, GroupLuckyKingEvent, GroupMessageEmojiLikeEvent, GroupMessageEvent,
-    GroupMessageQO, GroupPokeEvent, GroupRecallEvent, GroupRequestEvent, GroupRequestQO,
+    GroupMessageQO, GroupPokeEvent, GroupPokeRecallEvent, GroupRecallEvent, GroupRequestEvent, GroupRequestQO,
     GroupTitleEvent, GroupUploadEvent, HeartbeatMetaEvent, LifecycleMetaEvent, OfflineFileEvent,
     OneBotEventData, PrivateMessageEvent, PrivateMessageQO
 } from './Event';
@@ -57,6 +57,14 @@ type EventTable          = {
     FriendPoke           : FriendPokeEvent;
     /** 群内戳一戳事件 */
     GroupPoke            : GroupPokeEvent;
+    /** 好友戳一戳撤回事件
+     * @llob_only
+     */
+    FriendPokeRecall     : FriendPokeRecallEvent;
+    /** 群内戳一戳撤回事件
+     * @llob_only
+     */
+    GroupPokeRecall      : GroupPokeRecallEvent;
     /** 群红包运气王提示事件 */
     GroupLuckyKing       : GroupLuckyKingEvent;
     /** 群成员荣誉变更提示事件 */
@@ -192,32 +200,28 @@ export class OneBotListener extends EventSystem<EventTable>{
                     this.invokeEvent(netype,fixdata as any);
                     return;
                 }
-                else if(data.sub_type!='poke'){
-                    const emap = {
-                        "lucky_king": 'GroupLuckyKing'  ,
-                        "honor"     : 'GroupHonor'      ,
-                        "title"     : 'GroupTitle'      ,
-                    } as const;
-                    const netype = emap[data.sub_type as keyof typeof emap];
-                    if(netype==null){
-                        SLogger.warn(`${LogPrefix}OneBotListener.routeEvent 一个预料之外的 notify sub_type`,data);
+
+                switch(data.sub_type){
+                    case "lucky_king":
+                        this.invokeEvent('GroupLuckyKing',data);
                         return;
-                    }
-                    const fixdata = data;
-                    this.invokeEvent(netype,fixdata as any);
-                    return;
-                }else if(data.sub_type=='poke'){
-                    if('group_id' in data){
-                        this.invokeEvent('GroupPoke',data);
+                    case "honor":
+                        this.invokeEvent('GroupHonor',data);
                         return;
-                    }
-                    else{
-                        this.invokeEvent('FriendPoke',data);
+                    case "title":
+                        this.invokeEvent('GroupTitle',data);
                         return;
-                    }
+                    case 'poke':
+                        if('group_id' in data)
+                            return void this.invokeEvent('GroupPoke',data);
+                        return void this.invokeEvent('FriendPoke',data);
+                    case 'poke_recall':
+                        if('group_id' in data)
+                            return void this.invokeEvent('GroupPokeRecall',data);
+                        return void this.invokeEvent('FriendPokeRecall',data);
+                    default:
+                        return SLogger.warn(`${LogPrefix}OneBotListener.routeEvent 一个预料之外的 notice_type`,data);
                 }
-                SLogger.warn(`${LogPrefix}OneBotListener.routeEvent 一个预料之外的 notice_type`,data);
-                return;
             case 'meta_event':
                 switch(data.meta_event_type){
                     case 'heartbeat':
