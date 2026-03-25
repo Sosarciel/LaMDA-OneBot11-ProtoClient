@@ -1,3 +1,13 @@
-# Onebot11-ProtoClient
-onebot11协议客户端api
-onebot-11: https://github.com/botuniverse/onebot-11/tree/master?tab=readme-ov-file
+# OneBot11-ProtoClient
+
+OneBot11 协议客户端实现。
+
+---
+
+## 📋 实施计划
+
+- [[plan/README|查看所有计划]]
+
+---
+
+*最后更新: 2026-03-25*

@@ -13,9 +13,10 @@
 	"author": "zwa73",
 	"license": "ISC",
 	"dependencies": {
-		"@zwa73/js-utils": "^1.0.74",
+		"@zwa73/js-utils": "^1.0.85",
 		"@zwa73/modular-mixer": "^1.0.4",
-		"@zwa73/utils": "^1.0.280"
+		"@zwa73/service-manager": "^1.0.31",
+		"@zwa73/utils": "^1.0.294"
 	},
 	"files": [
 		"dist"
