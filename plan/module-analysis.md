@@ -1,41 +1,41 @@
 ---
-aliases: [onebot11-protoclient 模块演进分析]
+aliases: [OneBot11-ProtoClient 模块演进分析]
 ---
-# onebot11-protoclient 模块演进分析
+# OneBot11-ProtoClient 模块演进分析
 
 ## 已验证问题
 
-### p1 重要改进
+### P1 重要改进
 
-#### 1. 仅支持 http 模式 ✅ 已确认
-**位置**: `onebotlistener.ts:97`
-**问题**: 仅实现了 http 上报模式，无 websocket 支持
+#### 1. 仅支持 HTTP 模式 ✅ 已确认
+**位置**: `OneBotListener.ts:97`
+**问题**: 仅实现了 HTTP 上报模式，无 WebSocket 支持
 **影响**: 依赖客户端主动上报，无法主动推送消息
-**方案**: 评估添加 websocket 模式支持
+**方案**: 评估添加 WebSocket 模式支持
 
 #### 2. 错误处理扩展性 ✅ 已确认
-**位置**: `onebotlistener.ts` 多处
-**问题**: 未知事件类型仅 `slogger.warn`，无法扩展处理
+**位置**: `OneBotListener.ts` 多处
+**问题**: 未知事件类型仅 `SLogger.warn`，无法扩展处理
 **影响**: 新事件类型需要修改源码
 **方案**: 添加事件类型扩展机制或 "unknown" 事件
 
-### p2 架构优化
+### P2 架构优化
 
 #### 1. 类型安全 ✅ 已确认
 **问题**: 部分事件类型推断不完整，如 `fixdata as any`
 **方案**: 增强类型定义
 
 #### 2. 文档完善 ✅ 已确认
-**问题**: 缺少 api 使用文档
+**问题**: 缺少 API 使用文档
 **方案**: 补充使用文档
 
-### p3 功能增强
+### P3 功能增强
 
-#### 1. websocket 支持 ✅ 已确认需要
-**建议**: 添加 websocket 客户端模式
+#### 1. WebSocket 支持 ✅ 已确认需要
+**建议**: 添加 WebSocket 客户端模式
 ```typescript
-interface onebotwebsocket {
-    connect(url: string): promise<void>;
+interface OneBotWebSocket {
+    connect(url: string): Promise<void>;
     disconnect(): void;
 }
 ```
@@ -44,7 +44,7 @@ interface onebotwebsocket {
 **建议**: 消息发送队列、限流控制
 
 #### 3. 重连机制 ✅ 已确认需要
-**建议**: websocket 模式下自动重连、心跳检测
+**建议**: WebSocket 模式下自动重连、心跳检测
 
 ---
 
@@ -52,13 +52,13 @@ interface onebotwebsocket {
 
 | 项目 | 严重程度 | 预估工时 | 优先级 |
 |------|----------|----------|--------|
-| http 模式限制 | 中 | 8h | p1 |
-| 错误处理扩展 | 中 | 2h | p1 |
-| 类型安全 | 低 | 4h | p2 |
-| 文档完善 | 低 | 2h | p2 |
-| websocket 支持 | 低 | 8h | p2 |
-| 消息队列 | 低 | 4h | p3 |
-| 重连机制 | 低 | 4h | p3 |
+| HTTP 模式限制 | 中 | 8h | P1 |
+| 错误处理扩展 | 中 | 2h | P1 |
+| 类型安全 | 低 | 4h | P2 |
+| 文档完善 | 低 | 2h | P2 |
+| WebSocket 支持 | 低 | 8h | P2 |
+| 消息队列 | 低 | 4h | P3 |
+| 重连机制 | 低 | 4h | P3 |
 
 ---
 
@@ -70,7 +70,7 @@ interface onebotwebsocket {
 
 ### 中期目标
 - 类型安全增强
-- websocket 支持
+- WebSocket 支持
 
 ### 长期目标
 - 消息队列
