@@ -1,4 +1,4 @@
-import { JObject } from '@zwa73/js-utils';
+import { JObject } from '@zwa73/utils';
 import { OneBotEventBaseData, File } from './EventInterface';
 
 
