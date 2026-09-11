@@ -311,6 +311,23 @@ export type GroupMessageEmojiLikeEventData = OneBotEventNoticeData<"group_msg_em
  */
 export type GroupMessageEmojiLikeEvent = (data: GroupMessageEmojiLikeEventData) => void;
 
+/** 好友输入状态事件数据
+ * @snowluma_only
+ */
+export type FriendInputStatusEventData = OneBotEventNoticeData<"notify">&{
+    /** 子类型 */
+    sub_type: 'input_status'
+    /** 操作者QQ号 */
+    user_id: number;
+    /** 1: 正在输入 3: 正在讲话 */
+    event_type: 1|3;
+    /** 输入状态文本 */
+    status_text: string;
+}
+/** 好友输入状态事件
+ * @snowluma_only
+ */
+export type FriendInputStatusEvent = (data: FriendInputStatusEventData) => void;
 
 /**任何通知事件数据 */
 export type NoticeEventData =
@@ -333,7 +350,8 @@ export type NoticeEventData =
     | OfflineFileEventData
     | ClientStatusEventData
     | EssenceMessageEventData
-    | GroupMessageEmojiLikeEventData;
+    | GroupMessageEmojiLikeEventData
+    | FriendInputStatusEventData;
 
 /**任何通知事件 */
 export type NoticeEvent =
@@ -356,4 +374,5 @@ export type NoticeEvent =
     & OfflineFileEvent
     & ClientStatusEvent
     & EssenceMessageEvent
-    & GroupMessageEmojiLikeEvent;
+    & GroupMessageEmojiLikeEvent
+    & FriendInputStatusEvent;

@@ -3,7 +3,7 @@ import http from 'http';
 import { EventSystem, sleep, SLogger } from '@zwa73/utils';
 
 import {
-    ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendPokeEvent, FriendPokeRecallEvent, FriendRecallEvent,
+    ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendInputStatusEvent, FriendPokeEvent, FriendPokeRecallEvent, FriendRecallEvent,
     FriendRequestEvent, FriendRequestQO, GroupAdminEvent, GroupBanEvent, GroupCardEvent,
     GroupDecreaseEvent, GroupHonorEvent, GroupIncreaseEvent, GroupLuckyKingEvent, GroupMessageEmojiLikeEvent, GroupMessageEvent,
     GroupMessageQO, GroupPokeEvent, GroupPokeRecallEvent, GroupRecallEvent, GroupRequestEvent, GroupRequestQO,
@@ -93,6 +93,10 @@ type EventTable          = {
      * @llob_only
      */
     GroupMessageEmojiLike: GroupMessageEmojiLikeEvent;
+    /** 好友输入状态
+     * @snowluma
+     */
+    FriendInputStatus    : FriendInputStatusEvent;
 
     /** 心跳元事件 */
     HeartbeatMeta        : HeartbeatMetaEvent;
@@ -219,6 +223,9 @@ export class OneBotListener extends EventSystem<EventTable>{
                         if('group_id' in data)
                             return void this.invokeEvent('GroupPokeRecall',data);
                         return void this.invokeEvent('FriendPokeRecall',data);
+                    case 'input_status':
+                        this.invokeEvent('FriendInputStatus',data);
+                        return;
                     default:
                         return SLogger.warn(`${LogPrefix}OneBotListener.routeEvent 一个预料之外的 notice_type`,data);
                 }
