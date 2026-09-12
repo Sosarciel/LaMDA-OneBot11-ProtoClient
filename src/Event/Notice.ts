@@ -315,19 +315,71 @@ export type GroupMessageEmojiLikeEvent = (data: GroupMessageEmojiLikeEventData) 
  * @snowluma_only
  */
 export type FriendInputStatusEventData = OneBotEventNoticeData<"notify">&{
-    /** 子类型 */
-    sub_type: 'input_status'
-    /** 操作者QQ号 */
+    /** string - 子类型 */
+    sub_type: 'input_status';
+    /** int64 - 操作者QQ号 */
     user_id: number;
-    /** 1: 正在输入 3: 正在讲话 */
+    /** int32 - 1: 正在输入 3: 正在讲话 */
     event_type: 1|3;
-    /** 输入状态文本 */
+    /** string - 输入状态文本 */
     status_text: string;
-}
+};
 /** 好友输入状态事件
  * @snowluma_only
  */
 export type FriendInputStatusEvent = (data: FriendInputStatusEventData) => void;
+
+/** 群名称变更事件数据
+ * @snowluma_only
+ */
+export type GroupNameEventData = OneBotEventNoticeData<"notify">&{
+    /** string - 提示类型 */
+    sub_type: "group_name";
+    /** int64 - 群号 */
+    group_id: number;
+    /** int64 - 操作者 QQ 号 */
+    user_id: number;
+    /** string - 新群名称 */
+    name_new: string;
+};
+/** 群名称变更事件
+ * @snowluma_only
+ */
+export type GroupNameEvent = (data: GroupNameEventData) => void;
+
+/** 好友名片点赞事件数据
+ * @snowluma_only
+ */
+export type FriendProfileLikeEventData = OneBotEventNoticeData<"notify">&{
+    /** string - 提示类型 */
+    sub_type: "profile_like";
+    /** int64 - 点赞者 QQ 号 */
+    operator_id: number;
+    /** string - 点赞者昵称 */
+    operator_nick: string;
+    /** int32 - 点赞次数 */
+    times: number;
+};
+/** 好友名片点赞事件
+ * @snowluma_only
+ */
+export type FriendProfileLikeEvent = (data: FriendProfileLikeEventData) => void;
+
+/** 机器人离线事件数据
+ * @snowluma_only
+ */
+export type BotOfflineEventData = OneBotEventNoticeData<"bot_offline">&{
+    /** int64 - 机器人 QQ 号 */
+    user_id: number;
+    /** string - 离线标签 */
+    tag: string;
+    /** string - 离线消息 */
+    message: string;
+};
+/** 机器人离线事件
+ * @snowluma_only
+ */
+export type BotOfflineEvent = (data: BotOfflineEventData) => void;
 
 /**任何通知事件数据 */
 export type NoticeEventData =
@@ -351,7 +403,10 @@ export type NoticeEventData =
     | ClientStatusEventData
     | EssenceMessageEventData
     | GroupMessageEmojiLikeEventData
-    | FriendInputStatusEventData;
+    | FriendInputStatusEventData
+    | GroupNameEventData
+    | FriendProfileLikeEventData
+    | BotOfflineEventData;
 
 /**任何通知事件 */
 export type NoticeEvent =
@@ -375,4 +430,7 @@ export type NoticeEvent =
     & ClientStatusEvent
     & EssenceMessageEvent
     & GroupMessageEmojiLikeEvent
-    & FriendInputStatusEvent;
+    & FriendInputStatusEvent
+    & GroupNameEvent
+    & FriendProfileLikeEvent
+    & BotOfflineEvent;

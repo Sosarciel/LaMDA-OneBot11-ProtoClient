@@ -3,12 +3,12 @@ import http from 'http';
 import { EventSystem, sleep, SLogger } from '@zwa73/utils';
 
 import {
-    ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendInputStatusEvent, FriendPokeEvent, FriendPokeRecallEvent, FriendRecallEvent,
+    BotOfflineEvent, ClientStatusEvent, EssenceMessageEvent, FriendAddEvent, FriendInputStatusEvent, FriendPokeEvent, FriendPokeRecallEvent, FriendRecallEvent,
     FriendRequestEvent, FriendRequestQO, GroupAdminEvent, GroupBanEvent, GroupCardEvent,
     GroupDecreaseEvent, GroupHonorEvent, GroupIncreaseEvent, GroupLuckyKingEvent, GroupMessageEmojiLikeEvent, GroupMessageEvent,
-    GroupMessageQO, GroupPokeEvent, GroupPokeRecallEvent, GroupRecallEvent, GroupRequestEvent, GroupRequestQO,
+    GroupMessageQO, GroupNameEvent, GroupPokeEvent, GroupPokeRecallEvent, GroupRecallEvent, GroupRequestEvent, GroupRequestQO,
     GroupTitleEvent, GroupUploadEvent, HeartbeatMetaEvent, LifecycleMetaEvent, OfflineFileEvent,
-    OneBotEventData, PrivateMessageEvent, PrivateMessageQO
+    OneBotEventData, PrivateMessageEvent, PrivateMessageQO, FriendProfileLikeEvent
 } from './Event';
 import { LogPrefix } from './Constant';
 
@@ -25,16 +25,25 @@ type OneBotListenerOption = {
 
 /** 事件表 */
 type EventTable          = {
+    // 消息事件
     /** 群消息事件 */
     GroupMessage         : GroupMessageEvent;
     /** 私聊消息事件 */
     PrivateMessage       : PrivateMessageEvent;
 
+    // 请求事件
     /** 好友请求事件 */
     FriendRequest        : FriendRequestEvent;
     /** 加群请求/邀请事件 */
     GroupRequest         : GroupRequestEvent;
 
+    // 元事件
+    /** 心跳元事件 */
+    HeartbeatMeta        : HeartbeatMetaEvent;
+    /** 生命周期元事件 */
+    LifecycleMeta        : LifecycleMetaEvent;
+
+    // 通知事件
     /** 群文件上传事件 */
     GroupUpload          : GroupUploadEvent;
     /** 群管理员变动事件 */
@@ -97,11 +106,18 @@ type EventTable          = {
      * @snowluma
      */
     FriendInputStatus    : FriendInputStatusEvent;
-
-    /** 心跳元事件 */
-    HeartbeatMeta        : HeartbeatMetaEvent;
-    /** 生命周期元事件 */
-    LifecycleMeta        : LifecycleMetaEvent;
+    /** 群名称变更事件
+     * @snowluma_only
+     */
+    GroupName            : GroupNameEvent;
+    /** 好友名片点赞事件
+     * @snowluma_only
+     */
+    FriendProfileLike    : FriendProfileLikeEvent;
+    /** 机器人离线事件
+     * @snowluma_only
+     */
+    BotOffline           : BotOfflineEvent;
 };
 
 
@@ -190,6 +206,7 @@ export class OneBotListener extends EventSystem<EventTable>{
                         "group_recall"              : 'GroupRecall'               ,
                         "friend_recall"             : 'FriendRecall'              ,
                         "group_card"                : 'GroupCard'                 ,
+                        "bot_offline"               : 'BotOffline'                ,
                         "offline_file"              : 'OfflineFile'               ,
                         "client_status"             : 'ClientStatus'              ,
                         "essence"                   : 'EssenceMessage'            ,
@@ -214,6 +231,12 @@ export class OneBotListener extends EventSystem<EventTable>{
                         return;
                     case "title":
                         this.invokeEvent('GroupTitle',data);
+                        return;
+                    case "group_name":
+                        this.invokeEvent('GroupName',data);
+                        return;
+                    case "profile_like":
+                        this.invokeEvent('FriendProfileLike',data);
                         return;
                     case 'poke':
                         if('group_id' in data)
